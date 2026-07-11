@@ -1,0 +1,54 @@
+{
+  "name": "alcohol-label-verifier",
+  "version": "1.0.0",
+  "description": "AI-powered alcohol label verification system for TTB compliance",
+  "private": true,
+  "workspaces": [
+    "packages/backend",
+    "packages/frontend",
+    "packages/shared"
+  ],
+  "scripts": {
+    "install-all": "npm install && npm install -w packages/backend && npm install -w packages/frontend && npm install -w packages/shared",
+    "dev": "npm run dev -w packages/backend & npm run dev -w packages/frontend",
+    "dev:backend": "npm run dev -w packages/backend",
+    "dev:frontend": "npm run dev -w packages/frontend",
+    "build": "npm run build -w packages/backend && npm run build -w packages/frontend",
+    "build:backend": "npm run build -w packages/backend",
+    "build:frontend": "npm run build -w packages/frontend",
+    "test": "jest --passWithNoTests",
+    "test:backend": "jest --config packages/backend/jest.config.js",
+    "test:frontend": "jest --config packages/frontend/jest.config.js",
+    "test:coverage": "jest --coverage",
+    "test:e2e": "playwright test",
+    "test:load": "npm run test:load -w packages/backend",
+    "lint": "eslint . --ext .ts,.tsx",
+    "lint:fix": "eslint . --ext .ts,.tsx --fix",
+    "format": "prettier --write .",
+    "type-check": "tsc --noEmit",
+    "db:migrate": "npm run migrate -w packages/backend",
+    "db:seed": "npm run seed -w packages/backend",
+    "docker:build": "docker-compose build",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:logs": "docker-compose logs -f",
+    "clean": "rm -rf node_modules packages/*/node_modules packages/*/dist packages/*/.next",
+    "docs": "echo 'See /docs for complete documentation'"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.0",
+    "@types/node": "^20.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint": "^8.0.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-prettier": "^5.0.0",
+    "jest": "^29.5.0",
+    "prettier": "^3.0.0",
+    "typescript": "^5.1.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  }
+}
