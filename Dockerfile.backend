@@ -13,6 +13,9 @@ COPY packages/shared/package.json packages/shared/
 # Install all dependencies
 RUN npm ci
 
+# Copy root tsconfig (extended by workspace packages)
+COPY tsconfig.json ./
+
 # Copy source code
 COPY packages/backend packages/backend
 COPY packages/shared packages/shared
