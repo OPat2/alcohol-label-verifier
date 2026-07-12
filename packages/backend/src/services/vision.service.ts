@@ -1,6 +1,6 @@
 import { createWorker } from 'tesseract.js';
 import { createLogger } from '@/utils/logger';
-import { ExtractedLabel } from '@shared/types';
+import { ExtractedLabel } from '@label-verifier/shared';
 import sharp from 'sharp';
 
 const logger = createLogger('services:vision');

@@ -1,5 +1,5 @@
 import { Response } from 'express';
-import { ApiResponse } from '@shared/types';
+import { ApiResponse } from '@label-verifier/shared';
 
 export const sendSuccess = <T>(
   res: Response,

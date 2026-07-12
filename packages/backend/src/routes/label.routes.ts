@@ -5,7 +5,7 @@ import { createLogger } from '@/utils/logger';
 import multer from 'multer';
 import { extractLabelText, preprocessImage } from '@/services/vision.service';
 import { validateLabel } from '@/services/validator.service';
-import { VerificationResult, ApplicationData } from '@shared/types';
+import { VerificationResult, ApplicationData } from '@label-verifier/shared';
 import { v4 as uuid } from 'uuid';
 
 const router = Router();

@@ -1,6 +1,6 @@
 import request from 'supertest';
 import app from '@/app';
-import { GOVERNMENT_WARNING_TEXT } from '@shared/constants';
+import { GOVERNMENT_WARNING_TEXT } from '@label-verifier/shared';
 
 beforeAll(() => {
   process.env.MOCK_VISION_API = 'true';

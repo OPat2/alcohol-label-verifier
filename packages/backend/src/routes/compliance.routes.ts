@@ -2,7 +2,7 @@ import { Router, Response } from 'express';
 import { sendSuccess, sendError } from '@/utils/response';
 import { createLogger } from '@/utils/logger';
 import { AuthRequest } from '@/middleware/auth';
-import { GOVERNMENT_WARNING_TEXT } from '@shared/constants';
+import { GOVERNMENT_WARNING_TEXT } from '@label-verifier/shared';
 
 const router = Router();
 const logger = createLogger('routes:compliance');

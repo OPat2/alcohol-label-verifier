@@ -4,8 +4,7 @@ import {
   normalizeText,
   calculateSimilarity,
 } from '@/services/validator.service';
-import { ExtractedLabel, ApplicationData } from '@shared/types';
-import { GOVERNMENT_WARNING_TEXT } from '@shared/constants';
+import { ExtractedLabel, ApplicationData, GOVERNMENT_WARNING_TEXT } from '@label-verifier/shared';
 
 const CANONICAL_WARNING = GOVERNMENT_WARNING_TEXT;
 

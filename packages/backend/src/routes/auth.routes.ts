@@ -2,7 +2,7 @@ import { Router, Response } from 'express';
 import { sendSuccess, sendError } from '@/utils/response';
 import { createLogger } from '@/utils/logger';
 import jwt from 'jsonwebtoken';
-import { LoginRequest, LoginResponse } from '@shared/types';
+import { LoginRequest, LoginResponse } from '@label-verifier/shared';
 
 const router = Router();
 const logger = createLogger('routes:auth');

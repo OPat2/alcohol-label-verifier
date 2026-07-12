@@ -1,5 +1,4 @@
-import { ExtractedLabel, ApplicationData, FieldComparison, ValidatorConfig } from '@shared/types';
-import { GOVERNMENT_WARNING_TEXT } from '@shared/constants';
+import { ExtractedLabel, ApplicationData, FieldComparison, ValidatorConfig, GOVERNMENT_WARNING_TEXT } from '@label-verifier/shared';
 import { createLogger } from '@/utils/logger';
 
 const logger = createLogger('services:validator');
