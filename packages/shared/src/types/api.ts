@@ -1,4 +1,4 @@
-import { VerificationResult, ExtractedLabel, ApplicationData } from './label';
+import { VerificationResult, ApplicationData } from './label';
 
 export interface ApiResponse<T> {
   success: boolean;
