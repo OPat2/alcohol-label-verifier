@@ -1,0 +1,5 @@
+name = "alcohol-label-verifier"
+pages_build_output_dir = "packages/frontend/dist"
+
+[env.production]
+name = "alcohol-label-verifier"
