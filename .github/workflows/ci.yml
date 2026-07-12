@@ -58,6 +58,7 @@ jobs:
           node-version: '20'
           cache: 'npm'
       - run: npm ci
+      - run: npm run build -w packages/shared
       - run: npx tsc --noEmit -p packages/backend/tsconfig.json
       - run: npx tsc --noEmit -p packages/frontend/tsconfig.json
 

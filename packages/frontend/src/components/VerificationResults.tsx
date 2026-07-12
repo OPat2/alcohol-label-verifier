@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { CheckCircle, AlertCircle, Clock, Download, RefreshCw, ChevronDown, ChevronUp } from 'lucide-react';
 import type { VerificationResult, FieldComparison } from '@shared/types';
-import { labelService } from '@/services/api';
 import toast from 'react-hot-toast';
 
 interface VerificationResultsProps {

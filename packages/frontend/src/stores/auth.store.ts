@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { User, AuthContext } from '@shared/types';
+import type { AuthContext } from '@shared/types';
 import { authService } from '@/services/api';
 
 interface AuthStore extends AuthContext {

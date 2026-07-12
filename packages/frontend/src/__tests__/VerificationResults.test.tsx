@@ -1,6 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
-import React from 'react';
 import VerificationResults from '@/components/VerificationResults';
 import type { VerificationResult } from '@shared/types';
 
@@ -37,9 +36,25 @@ const mockResult: VerificationResult = {
       notes: 'GOVERNMENT WARNING: header must be uppercase',
     },
   ],
-  metadata: { filename: 'test-label.jpg', fileSize: 12345, processingTime: 1200 },
+  metadata: {
+    id: 'meta-123',
+    uploadedAt: '2024-01-01T00:00:00Z',
+    uploadedBy: 'test-user',
+    filename: 'test-label.jpg',
+    imageUrl: '',
+    processingStatus: 'completed',
+    confidence: 95,
+  },
+  extracted: { rawText: 'OLD TOM DISTILLERY...' },
+  application: {
+    applicationId: 'app-123',
+    brandName: 'Old Tom Distillery',
+    classType: 'Whiskey',
+    abv: { percentage: 45 },
+    netContents: { volume: 750, unit: 'mL' },
+    beverage: { type: 'spirits' },
+  },
   timings: { ocrMs: 800, validationMs: 100, preprocessMs: 50, totalMs: 1200 },
-  extractedText: 'OLD TOM DISTILLERY...',
 };
 
 const renderResults = (result = mockResult, onReset = vi.fn()) =>
