@@ -1,0 +1,58 @@
+name: Deploy to Cloudflare Pages
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Two ways to use this workflow:
+#
+# Option A (recommended — no secrets required):
+#   Connect this repo directly in the Cloudflare Pages dashboard.
+#   CF will auto-detect pushes to main and run the build for you.
+#   This workflow is then just an optional CI status badge.
+#
+# Option B (wrangler-action — needs 3 GitHub secrets):
+#   CLOUDFLARE_API_TOKEN  — CF dashboard → My Profile → API Tokens
+#   CLOUDFLARE_ACCOUNT_ID — CF dashboard → right sidebar on Workers & Pages
+#   VITE_API_URL          — your Render backend URL + /api
+#
+#   Set these at: github.com/OPat2/alcohol-label-verifier/settings/secrets/actions
+# ─────────────────────────────────────────────────────────────────────────────
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  deployments: write
+
+jobs:
+  deploy-frontend:
+    name: Deploy Frontend to Cloudflare Pages
+    runs-on: ubuntu-latest
+    # Skip this job when using Option A (CF dashboard integration)
+    # Remove the `if` line below once you have the three secrets set (Option B)
+    if: ${{ secrets.CLOUDFLARE_API_TOKEN != '' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - run: npm ci
+
+      - name: Build shared package
+        run: npm run build -w packages/shared
+
+      - name: Build frontend
+        run: npm run build -w packages/frontend
+        env:
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}
+
+      - name: Publish to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy packages/frontend/dist --project-name=alcohol-label-verifier --commit-dirty=true

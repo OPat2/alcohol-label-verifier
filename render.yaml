@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: label-verifier-api
+    runtime: docker
+    dockerfilePath: Dockerfile.backend
+    plan: free
+    region: oregon
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: API_PORT
+        value: "5000"
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRY
+        value: 24h
+      - key: MOCK_VISION_API
+        value: "false"
+      - key: MAX_BATCH_SIZE
+        value: "300"
+      - key: LOG_LEVEL
+        value: info
+      - key: CORS_ORIGIN
+        sync: false   # fill in with your Cloudflare Pages URL after first deploy
