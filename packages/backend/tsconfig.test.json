@@ -3,7 +3,11 @@
   "compilerOptions": {
     "rootDir": "../",
     "noUnusedLocals": false,
-    "noUnusedParameters": false
+    "noUnusedParameters": false,
+    "paths": {
+      "@/*": ["src/*"],
+      "@shared/*": ["../shared/src/*"]
+    }
   },
   "include": ["src/**/*", "../shared/src/**/*"]
 }
