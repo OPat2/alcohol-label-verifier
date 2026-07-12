@@ -148,34 +148,90 @@ Copy `.env.example` to `.env` and adjust:
 
 ## Deployment
 
-### Docker Compose (production)
+> **Recommended path for a public URL:** Deploy the backend to Render (free tier, `render.yaml` included) then the frontend to Cloudflare Pages (connected to this GitHub repo). Total setup time ≈ 15 minutes.
+
+---
+
+### Option A — Render (backend) + Cloudflare Pages (frontend) ⭐ recommended
+
+#### Step 1 — Deploy the backend to Render
+
+1. Go to [render.com](https://render.com) → **New → Blueprint Instance**.
+2. Connect this GitHub repository. Render detects `render.yaml` automatically.
+3. Click **Apply** — Render builds and deploys the backend using `Dockerfile.backend`.
+4. After the service is live (green **Healthy** badge), copy the service URL, e.g.  
+   `https://label-verifier-api.onrender.com`
+5. In the Render dashboard → **Environment**, add:
+   ```
+   CORS_ORIGIN = https://<your-cf-pages-subdomain>.pages.dev
+   ```
+   (You can fill this in after step 2 if you don't know it yet.)
+
+#### Step 2 — Deploy the frontend to Cloudflare Pages
+
+1. Go to [dash.cloudflare.com](https://dash.cloudflare.com) → **Workers & Pages → Create application → Pages → Connect to Git**.
+2. Select this repository.
+3. Configure the build:
+
+   | Setting | Value |
+   |---|---|
+   | Framework preset | None |
+   | Build command | `npm ci && npm run build -w packages/shared && npm run build -w packages/frontend` |
+   | Build output directory | `packages/frontend/dist` |
+
+4. Under **Environment variables (production)**, add:
+   ```
+   VITE_API_URL = https://label-verifier-api.onrender.com/api
+   ```
+5. Click **Save and Deploy**. Cloudflare Pages assigns a URL like  
+   `https://alcohol-label-verifier.pages.dev`
+
+#### Step 3 — Wire up CORS
+
+Back in Render → **Environment**, set `CORS_ORIGIN` to your Cloudflare Pages URL and redeploy (or the service picks it up on next restart).
+
+#### Step 4 — Verify
+
+```
+GET https://label-verifier-api.onrender.com/health
+→ 200 { "status": "healthy", ... }
+```
+
+Open `https://alcohol-label-verifier.pages.dev` — log in with `agent@ttb.gov` / `demo123`.
+
+---
+
+### Option B — Automated deploys via GitHub Actions
+
+After completing Option A above, future pushes to `main` automatically redeploy the frontend via `.github/workflows/deploy.yml`. Add these three secrets to **GitHub → Settings → Secrets → Actions**:
+
+| Secret | Where to find it |
+|---|---|
+| `CLOUDFLARE_API_TOKEN` | CF dashboard → My Profile → API Tokens → Create Token (use *Edit Cloudflare Workers* template) |
+| `CLOUDFLARE_ACCOUNT_ID` | CF dashboard → right-hand sidebar on the Workers & Pages overview page |
+| `VITE_API_URL` | Your Render backend URL + `/api`, e.g. `https://label-verifier-api.onrender.com/api` |
+
+---
+
+### Option C — Docker Compose (self-hosted / local production)
 ```bash
-# 1. Set environment variables
 export JWT_SECRET="$(openssl rand -base64 32)"
 export NODE_ENV=production
-
-# 2. Build and start
 docker compose up --build -d
-
-# 3. Verify health
+# App at http://localhost:3000, API at http://localhost:5000
 curl http://localhost:5000/health
 ```
 
-### Cloud deployment (Render / Railway / Fly.io)
+---
 
-**Render** (recommended for month-long uptime):
-1. Push repo to GitHub.
-2. Create a new Web Service pointing to this repo.
-3. Use Docker build; set `Dockerfile` to `Dockerfile.backend`.
-4. Add env vars: `JWT_SECRET`, `NODE_ENV=production`.
-5. (Optional) Add a second Static Site service for the frontend with `npm run build -w packages/frontend` and publish directory `packages/frontend/dist`.
-
-**Fly.io:**
+### Option D — Fly.io (backend only)
 ```bash
 fly launch --dockerfile Dockerfile.backend --name label-verifier-api
 fly secrets set JWT_SECRET=$(openssl rand -base64 32)
 fly deploy
 ```
+
+---
 
 ### Health endpoint
 ```
