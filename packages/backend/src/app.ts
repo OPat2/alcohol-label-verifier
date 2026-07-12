@@ -1,4 +1,4 @@
-import express, { Express, Request, Response, NextFunction } from 'express';
+import express, { Express, Request, Response } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { createLogger } from '@/utils/logger';
@@ -35,7 +35,7 @@ app.use('/api/batch', authenticate, batchRoutes);
 app.use('/api/compliance', authenticate, complianceRoutes);
 
 // 404 handler
-app.use((req: Request, res: Response) => {
+app.use((_req: Request, res: Response) => {
   res.status(404).json({
     success: false,
     error: {
@@ -49,9 +49,11 @@ app.use((req: Request, res: Response) => {
 // Error handler (must be last)
 app.use(errorHandler);
 
-// Start server
-app.listen(PORT, () => {
-  logger.info(`Server running on port ${PORT}`);
-});
+// Start server only when not in test mode
+if (process.env.NODE_ENV !== 'test') {
+  app.listen(PORT, () => {
+    logger.info(`Server running on port ${PORT}`);
+  });
+}
 
 export default app;

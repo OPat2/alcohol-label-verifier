@@ -1,7 +1,6 @@
 import { Router, Response } from 'express';
 import { sendSuccess, sendError } from '@/utils/response';
 import { createLogger } from '@/utils/logger';
-import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { LoginRequest, LoginResponse } from '@shared/types';
 
@@ -16,18 +15,24 @@ router.post('/login', async (req: any, res: Response) => {
       return sendError(res, 'VALIDATION_FAILED', 'Email and password required', 400);
     }
 
-    // Mock user for demo
+    // Mock user for demo prototype
     const mockUser = {
       id: 'user-123',
       email: 'agent@ttb.gov',
       name: 'TTB Agent',
-      role: 'agent',
+      role: 'agent' as const,
       organizationId: 'org-123',
+      createdAt: new Date().toISOString(),
     };
 
-    const token = jwt.sign(mockUser, process.env.JWT_SECRET || 'secret', {
-      expiresIn: process.env.JWT_EXPIRY || '24h',
-    });
+    const secret = process.env.JWT_SECRET || 'secret';
+    // Cast to any to avoid strict StringValue type in newer @types/jsonwebtoken
+    const options = { expiresIn: process.env.JWT_EXPIRY || '24h' } as Parameters<typeof jwt.sign>[2];
+    const token = jwt.sign(
+      { id: mockUser.id, email: mockUser.email, role: mockUser.role },
+      secret,
+      options,
+    );
 
     const response: LoginResponse = {
       token,

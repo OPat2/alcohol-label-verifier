@@ -59,6 +59,7 @@ export interface FieldComparison {
   applicationValue: string;
   labelValue: string;
   match: boolean;
+  matchType: 'exact' | 'normalized' | 'mismatch' | 'missing';
   confidence: number; // 0-100
   notes?: string;
 }
@@ -74,4 +75,11 @@ export interface VerificationResult {
   agentNotes?: string;
   reviewedAt?: string;
   reviewedBy?: string;
+  timings?: {
+    uploadMs?: number;
+    preprocessMs?: number;
+    ocrMs?: number;
+    validationMs?: number;
+    totalMs?: number;
+  };
 }
