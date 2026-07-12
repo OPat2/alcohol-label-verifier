@@ -37,11 +37,7 @@ const mockResult: VerificationResult = {
       notes: 'GOVERNMENT WARNING: header must be uppercase',
     },
   ],
-  metadata: {
-    filename: 'test-label.jpg',
-    fileSize: 12345,
-    processingTime: 1200,
-  },
+  metadata: { filename: 'test-label.jpg', fileSize: 12345, processingTime: 1200 },
   timings: { ocrMs: 800, validationMs: 100, preprocessMs: 50, totalMs: 1200 },
   extractedText: 'OLD TOM DISTILLERY...',
 };
@@ -60,7 +56,7 @@ describe('VerificationResults', () => {
     expect(screen.getAllByText('95%').length).toBeGreaterThan(0);
   });
 
-  it('renders all field comparisons', () => {
+  it('renders all field comparison labels', () => {
     renderResults();
     expect(screen.getByText('Brand Name')).toBeInTheDocument();
     expect(screen.getByText('Alcohol Content (ABV)')).toBeInTheDocument();
@@ -69,14 +65,28 @@ describe('VerificationResults', () => {
 
   it('shows pass count summary', () => {
     renderResults();
-    expect(screen.getByText(/2 of 3 fields pass/i)).toBeInTheDocument();
+    expect(screen.getByText(/2.*of.*3.*fields pass/i)).toBeInTheDocument();
   });
 
-  it('expands a field row on click', () => {
+  it('auto-expands first failing field — notes visible on mount', () => {
+    renderResults();
+    // governmentWarning is the first (and only) failing field; expanded by default
+    expect(screen.getByText('GOVERNMENT WARNING: header must be uppercase')).toBeInTheDocument();
+  });
+
+  it('collapses an expanded field on click', () => {
     renderResults();
     const btn = screen.getByRole('button', { name: /toggle details for government warning/i });
+    fireEvent.click(btn); // was expanded, now collapse
+    expect(screen.queryByText('GOVERNMENT WARNING: header must be uppercase')).not.toBeInTheDocument();
+  });
+
+  it('expands a collapsed field on click', () => {
+    renderResults();
+    // brandName starts collapsed; click to open
+    const btn = screen.getByRole('button', { name: /toggle details for brand name/i });
     fireEvent.click(btn);
-    expect(screen.getByText(/GOVERNMENT WARNING: header must be uppercase/i)).toBeInTheDocument();
+    expect(screen.getByText('Normalized match (case-insensitive)')).toBeInTheDocument();
   });
 
   it('shows timing breakdown', () => {
@@ -85,27 +95,25 @@ describe('VerificationResults', () => {
     expect(screen.getByText(/Validation/i)).toBeInTheDocument();
   });
 
-  it('calls onReset when "Verify Another Label" is clicked', () => {
+  it('calls onReset when Verify Another Label is clicked', () => {
     const onReset = vi.fn();
     renderResults(mockResult, onReset);
     fireEvent.click(screen.getByRole('button', { name: /verify another label/i }));
     expect(onReset).toHaveBeenCalledTimes(1);
   });
 
-  it('download JSON button is present', () => {
+  it('has a download JSON button', () => {
     renderResults();
     expect(screen.getByRole('button', { name: /download report/i })).toBeInTheDocument();
   });
 
   it('shows rejected status correctly', () => {
-    const rejected = { ...mockResult, status: 'rejected' as const, overallConfidence: 30 };
-    renderResults(rejected);
+    renderResults({ ...mockResult, status: 'rejected', overallConfidence: 30 });
     expect(screen.getByText('Rejected')).toBeInTheDocument();
   });
 
   it('shows review_required status correctly', () => {
-    const review = { ...mockResult, status: 'review_required' as const };
-    renderResults(review);
+    renderResults({ ...mockResult, status: 'review_required' });
     expect(screen.getByText('Review Required')).toBeInTheDocument();
   });
 

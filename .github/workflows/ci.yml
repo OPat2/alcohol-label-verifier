@@ -47,7 +47,7 @@ jobs:
         run: npm ci
 
       - name: Run frontend tests
-        run: npm run test -w packages/frontend -- --run
+        run: npm run test -w packages/frontend -- --run --reporter=verbose
         env:
           NODE_ENV: test
 

@@ -6,41 +6,30 @@ import Dashboard from '@/components/Dashboard';
 import { useAuthStore } from '@/stores/auth.store';
 
 vi.mock('@/stores/auth.store');
-
 const mockUseAuthStore = useAuthStore as unknown as ReturnType<typeof vi.fn>;
 
 beforeEach(() => {
   vi.clearAllMocks();
-  mockUseAuthStore.mockReturnValue({
-    user: { firstName: 'Jenny', email: 'jenny@ttb.gov' },
-    isAuthenticated: true,
-    logout: vi.fn(),
-  });
+  mockUseAuthStore.mockReturnValue({ user: { firstName: 'Jenny' }, isAuthenticated: true, logout: vi.fn() });
 });
 
-const renderDashboard = () =>
-  render(
-    <MemoryRouter>
-      <Dashboard />
-    </MemoryRouter>,
-  );
+const renderDashboard = () => render(<MemoryRouter><Dashboard /></MemoryRouter>);
 
 describe('Dashboard', () => {
-  it('renders a welcome heading', () => {
+  it('renders welcome heading', () => {
     renderDashboard();
-    expect(
-      screen.getByRole('heading', { name: /welcome/i }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /welcome/i })).toBeInTheDocument();
   });
 
-  it('has a link to single label verification', () => {
+  it('has a card for single label verification', () => {
     renderDashboard();
-    expect(screen.getByText(/single label verification/i)).toBeInTheDocument();
+    // Use the unique h3 heading inside the card
+    expect(screen.getByRole('heading', { name: /single label verification/i })).toBeInTheDocument();
   });
 
-  it('has a link to batch upload', () => {
+  it('has a card for batch upload', () => {
     renderDashboard();
-    expect(screen.getByText(/batch upload/i)).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /batch upload/i })).toBeInTheDocument();
   });
 
   it('shows how-it-works section', () => {

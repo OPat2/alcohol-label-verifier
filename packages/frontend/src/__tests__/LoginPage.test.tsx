@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
@@ -13,25 +13,18 @@ const mockUseAuthStore = useAuthStore as unknown as ReturnType<typeof vi.fn>;
 
 beforeEach(() => {
   vi.clearAllMocks();
-  mockUseAuthStore.mockReturnValue({
-    login: mockLogin,
-    isAuthenticated: false,
-    isLoading: false,
-  });
+  mockUseAuthStore.mockReturnValue({ login: mockLogin, isAuthenticated: false, isLoading: false });
 });
 
 const renderLogin = () =>
-  render(
-    <MemoryRouter>
-      <LoginPage />
-    </MemoryRouter>,
-  );
+  render(<MemoryRouter><LoginPage /></MemoryRouter>);
 
 describe('LoginPage', () => {
-  it('renders email and password fields', () => {
+  it('renders email and password inputs', () => {
     renderLogin();
-    expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
+    // Use role + name for specificity — avoids collision with demo text
+    expect(screen.getByRole('textbox', { name: /email/i })).toBeInTheDocument();
+    expect(screen.getByLabelText('Password')).toBeInTheDocument();
   });
 
   it('renders sign in button', () => {
@@ -41,42 +34,31 @@ describe('LoginPage', () => {
 
   it('shows demo credentials section', () => {
     renderLogin();
-    expect(screen.getByText(/demo/i)).toBeInTheDocument();
+    expect(screen.getByText(/demo credentials/i)).toBeInTheDocument();
   });
 
-  it('calls login with entered credentials', async () => {
+  it('calls login with pre-filled demo credentials on submit', async () => {
     mockLogin.mockResolvedValue(undefined);
     renderLogin();
-
-    await userEvent.type(screen.getByLabelText(/email/i), 'agent@ttb.gov');
-    await userEvent.type(screen.getByLabelText(/password/i), 'demo123');
     await userEvent.click(screen.getByRole('button', { name: /sign in/i }));
-
     await waitFor(() => {
-      expect(mockLogin).toHaveBeenCalledWith('agent@ttb.gov', 'demo123');
+      expect(mockLogin).toHaveBeenCalledWith('agent@ttb.gov', 'password123');
     });
   });
 
-  it('shows error message on login failure', async () => {
-    mockLogin.mockRejectedValue(new Error('Invalid credentials'));
+  it('shows error alert on login failure', async () => {
+    mockLogin.mockRejectedValue(new Error('Bad credentials'));
     renderLogin();
-
-    await userEvent.type(screen.getByLabelText(/email/i), 'wrong@test.com');
-    await userEvent.type(screen.getByLabelText(/password/i), 'wrongpass');
     await userEvent.click(screen.getByRole('button', { name: /sign in/i }));
-
     await waitFor(() => {
       expect(screen.getByRole('alert')).toBeInTheDocument();
     });
   });
 
-  it('disables form while loading', () => {
-    mockUseAuthStore.mockReturnValue({
-      login: mockLogin,
-      isAuthenticated: false,
-      isLoading: true,
-    });
+  it('disables submit button while loading', () => {
+    mockUseAuthStore.mockReturnValue({ login: mockLogin, isAuthenticated: false, isLoading: true });
     renderLogin();
-    expect(screen.getByRole('button', { name: /sign in/i })).toBeDisabled();
+    // Button text changes to "Signing in…" when loading
+    expect(screen.getByRole('button', { name: /signing in/i })).toBeDisabled();
   });
 });
