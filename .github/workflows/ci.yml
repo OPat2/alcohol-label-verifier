@@ -1,0 +1,79 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+permissions:
+  contents: read
+
+jobs:
+  backend-tests:
+    name: Backend Tests
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - run: npm ci
+      - name: Run backend tests
+        run: npm run test -w packages/backend
+        env:
+          NODE_ENV: test
+          MOCK_VISION_API: 'true'
+          JWT_SECRET: ci-test-secret-at-least-32-chars-long
+
+  frontend-tests:
+    name: Frontend Tests
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - run: npm ci
+      - name: Run frontend tests
+        run: npm run test -w packages/frontend -- --run
+        env:
+          NODE_ENV: test
+
+  type-check:
+    name: TypeScript Type Check
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run build -w packages/shared
+      - run: npx tsc --noEmit -p packages/backend/tsconfig.json
+      - run: npx tsc --noEmit -p packages/frontend/tsconfig.json
+
+  build:
+    name: Build Check
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run build -w packages/shared
+      - run: npm run build -w packages/backend
+      - run: npm run build -w packages/frontend

@@ -4,13 +4,15 @@
     "outDir": "./dist",
     "rootDir": "./src",
     "baseUrl": "./src",
+    "module": "ESNext",
     "paths": {
       "@/*": ["./*"],
-      "@shared/*": ["../shared/src/*"]
+      "@shared/*": ["../../shared/src/*"]
     },
     "jsx": "react-jsx",
     "lib": ["ES2020", "DOM", "DOM.Iterable"]
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist"]
+  "exclude": ["node_modules", "dist"],
+  "references": [{ "path": "../shared" }]
 }

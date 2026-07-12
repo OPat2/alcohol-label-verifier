@@ -12,12 +12,12 @@ export interface AuthRequest extends Request {
   };
 }
 
-export const authenticate = (req: AuthRequest, res: Response, next: NextFunction) => {
+export const authenticate = (req: AuthRequest, res: Response, next: NextFunction): void => {
   try {
     const token = req.headers.authorization?.split(' ')[1];
 
     if (!token) {
-      return res.status(401).json({
+      res.status(401).json({
         success: false,
         error: {
           code: 'AUTH_UNAUTHORIZED',
@@ -25,9 +25,14 @@ export const authenticate = (req: AuthRequest, res: Response, next: NextFunction
         },
         timestamp: new Date().toISOString(),
       });
+      return;
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret') as any;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'dev-secret-change-in-production') as {
+      id: string;
+      email: string;
+      role: string;
+    };
     req.user = decoded;
     next();
   } catch (error) {

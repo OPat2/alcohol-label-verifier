@@ -8,7 +8,7 @@ export interface AppError extends Error {
   code?: string;
 }
 
-export const errorHandler = (err: AppError, req: Request, res: Response, next: NextFunction) => {
+export const errorHandler = (err: AppError, req: Request, res: Response, _next: NextFunction) => {
   const statusCode = err.statusCode || 500;
   const code = err.code || 'INTERNAL_ERROR';
 

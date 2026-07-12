@@ -1,29 +1,68 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
+import { useAuthStore } from '@/stores/auth.store';
+import LoginPage from '@/components/LoginPage';
+import Dashboard from '@/components/Dashboard';
+import SingleVerify from '@/components/SingleVerify';
+import BatchUpload from '@/components/BatchUpload';
+import NavBar from '@/components/NavBar';
+
+const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { isAuthenticated } = useAuthStore();
+  return isAuthenticated ? <>{children}</> : <Navigate to="/login" replace />;
+};
 
 const App: React.FC = () => {
-  return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white shadow">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <h1 className="text-3xl font-bold text-gray-900">
-            🍷 Alcohol Label Verification System
-          </h1>
-          <p className="text-sm text-gray-600 mt-1">TTB Compliance Assistant</p>
-        </div>
-      </header>
+  const { checkAuth } = useAuthStore();
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Welcome</h2>
-          <p className="text-gray-600 mb-4">
-            Upload a label image and application data to verify compliance with TTB requirements.
-          </p>
-          <button className="bg-primary text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">
-            Start Verification
-          </button>
-        </div>
-      </main>
-    </div>
+  useEffect(() => {
+    checkAuth();
+  }, [checkAuth]);
+
+  return (
+    <BrowserRouter>
+      <div className="min-h-screen bg-gray-50">
+        <Toaster position="top-right" />
+        <Routes>
+          <Route path="/login" element={<LoginPage />} />
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <>
+                  <NavBar />
+                  <Dashboard />
+                </>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/verify"
+            element={
+              <ProtectedRoute>
+                <>
+                  <NavBar />
+                  <SingleVerify />
+                </>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/batch"
+            element={
+              <ProtectedRoute>
+                <>
+                  <NavBar />
+                  <BatchUpload />
+                </>
+              </ProtectedRoute>
+            }
+          />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </div>
+    </BrowserRouter>
   );
 };
 
