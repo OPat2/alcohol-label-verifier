@@ -1,5 +1,6 @@
 import express, { Express, Request, Response } from 'express';
 import cors from 'cors';
+import rateLimit from 'express-rate-limit';
 import dotenv from 'dotenv';
 import { createLogger } from '@/utils/logger';
 import { errorHandler } from '@/middleware/error-handler';
@@ -13,21 +14,40 @@ import { healthCheck } from '@/controllers/health.controller';
 
 dotenv.config();
 
+if (!process.env.JWT_SECRET && process.env.NODE_ENV === 'production') {
+  throw new Error('JWT_SECRET environment variable must be set in production');
+}
+
 const logger = createLogger('app');
 const app: Express = express();
 const PORT = process.env.API_PORT || 5000;
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
 
 // Middleware
 app.use(cors({ origin: process.env.CORS_ORIGIN?.split(',') || '*' }));
 app.use(express.json({ limit: '100mb' }));
 app.use(express.urlencoded({ limit: '100mb', extended: true }));
 app.use(requestLogger);
+app.use(limiter);
 
 // Health check (public endpoint)
 app.get('/health', healthCheck);
 
-// Public routes
-app.use('/api/auth', authRoutes);
+// Public routes with tighter rate limit
+app.use('/api/auth', authLimiter, authRoutes);
 
 // Protected routes
 app.use('/api/labels', authenticate, labelRoutes);
@@ -38,10 +58,7 @@ app.use('/api/compliance', authenticate, complianceRoutes);
 app.use((_req: Request, res: Response) => {
   res.status(404).json({
     success: false,
-    error: {
-      code: 'NOT_FOUND',
-      message: 'Endpoint not found',
-    },
+    error: { code: 'NOT_FOUND', message: 'Endpoint not found' },
     timestamp: new Date().toISOString(),
   });
 });

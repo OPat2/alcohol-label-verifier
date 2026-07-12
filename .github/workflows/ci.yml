@@ -6,23 +6,22 @@ on:
   pull_request:
     branches: [main, master]
 
+permissions:
+  contents: read
+
 jobs:
   backend-tests:
     name: Backend Tests
     runs-on: ubuntu-latest
-
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
+      - run: npm ci
       - name: Run backend tests
         run: npm run test -w packages/backend
         env:
@@ -33,67 +32,47 @@ jobs:
   frontend-tests:
     name: Frontend Tests
     runs-on: ubuntu-latest
-
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
+      - run: npm ci
       - name: Run frontend tests
-        run: npm run test -w packages/frontend -- --run --reporter=verbose
+        run: npm run test -w packages/frontend -- --run
         env:
           NODE_ENV: test
 
   type-check:
     name: TypeScript Type Check
     runs-on: ubuntu-latest
-
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Type-check backend
-        run: npx tsc --noEmit -p packages/backend/tsconfig.json
-
-      - name: Type-check frontend
-        run: npx tsc --noEmit -p packages/frontend/tsconfig.json
+      - run: npm ci
+      - run: npx tsc --noEmit -p packages/backend/tsconfig.json
+      - run: npx tsc --noEmit -p packages/frontend/tsconfig.json
 
   build:
     name: Build Check
     runs-on: ubuntu-latest
-
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build shared package
-        run: npm run build -w packages/shared
-
-      - name: Build backend
-        run: npm run build -w packages/backend
-
-      - name: Build frontend
-        run: npm run build -w packages/frontend
+      - run: npm ci
+      - run: npm run build -w packages/shared
+      - run: npm run build -w packages/backend
+      - run: npm run build -w packages/frontend

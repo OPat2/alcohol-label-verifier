@@ -28,7 +28,7 @@ export const authenticate = (req: AuthRequest, res: Response, next: NextFunction
       return;
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret') as {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'dev-secret-change-in-production') as {
       id: string;
       email: string;
       role: string;

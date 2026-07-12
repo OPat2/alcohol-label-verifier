@@ -492,18 +492,22 @@ export const calculateSimilarity = (a: string, b: string): number => {
 };
 
 const getLevenshteinDistance = (a: string, b: string): number => {
-  const dp: number[][] = Array.from({ length: a.length + 1 }, (_, i) =>
-    Array.from({ length: b.length + 1 }, (_, j) => (i === 0 ? j : j === 0 ? i : 0)),
+  // Cap inputs to avoid unbounded iteration on user-controlled strings
+  const MAX_LEN = 500;
+  const sa = a.slice(0, MAX_LEN);
+  const sb = b.slice(0, MAX_LEN);
+  const dp: number[][] = Array.from({ length: sa.length + 1 }, (_, i) =>
+    Array.from({ length: sb.length + 1 }, (_, j) => (i === 0 ? j : j === 0 ? i : 0)),
   );
-  for (let i = 1; i <= a.length; i++) {
-    for (let j = 1; j <= b.length; j++) {
+  for (let i = 1; i <= sa.length; i++) {
+    for (let j = 1; j <= sb.length; j++) {
       dp[i][j] =
-        a[i - 1] === b[j - 1]
+        sa[i - 1] === sb[j - 1]
           ? dp[i - 1][j - 1]
           : 1 + Math.min(dp[i - 1][j - 1], dp[i - 1][j], dp[i][j - 1]);
     }
   }
-  return dp[a.length][b.length];
+  return dp[sa.length][sb.length];
 };
 
 const formatAbv = (abv: { percentage?: number; proof?: number; raw?: string } | undefined): string => {

@@ -5,8 +5,9 @@ import { useAuthStore } from '@/stores/auth.store';
 import toast from 'react-hot-toast';
 
 const LoginPage: React.FC = () => {
-  const [email, setEmail] = useState('agent@ttb.gov');
-  const [password, setPassword] = useState('password123');
+  const isDev = (import.meta as any).env?.MODE !== 'production';
+  const [email, setEmail] = useState(isDev ? 'agent@ttb.gov' : '');
+  const [password, setPassword] = useState(isDev ? 'password123' : '');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const { login, isLoading } = useAuthStore();
