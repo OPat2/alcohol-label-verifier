@@ -118,9 +118,9 @@ npm run dev -w packages/frontend
 
 Open http://localhost:3000
 
-**Demo sign-in:** use the credentials shown on the login page in the deployed app (`agent@ttb.gov` / `password123`).
+**Demo sign-in:** use the demo credentials shown on the login page.
 
-> **Prototype auth note:** the backend currently issues a demo JWT for any non-empty email/password pair and signs the user in as a mock TTB Agent. The login page shows the recommended demo values for testing.
+> **Prototype auth note:** authentication is mocked for demo purposes and should be replaced with a real identity provider or user store in production.
 
 ### Using Docker Compose (recommended for full-stack)
 ```bash
@@ -235,10 +235,7 @@ curl https://label-verifier-api.onrender.com/health
 # → {"status":"healthy","uptime":...}
 ```
 
-Open `https://alcohol-label-verifier.pages.dev` → log in with:
-- `agent@ttb.gov` / `password123`
-
-The deployed login page also displays the demo credentials.
+Open `https://alcohol-label-verifier.pages.dev` and sign in using the demo credentials shown on the login page.
 
 ---
 
