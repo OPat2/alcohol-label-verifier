@@ -21,7 +21,7 @@ A standalone prototype for TTB-style alcohol beverage label review workflows. It
 
 ## Deliverables Summary
 
-- **Source code repository:** `https://github.com/OPat2/alcohol-label-verifier`
+- **Source code repository:** this repository
 - **Deployed prototype:** `https://alcohol-label-verifier.pages.dev/login`
 - **This README includes:**
   - local setup and run instructions
@@ -120,7 +120,7 @@ Open http://localhost:3000
 
 **Demo sign-in:** use the demo credentials shown on the login page.
 
-> **Prototype auth note:** authentication is mocked for demo purposes and should be replaced with a real identity provider or user store in production.
+> **Prototype auth note:** Authentication is mocked for demo purposes and should be replaced with a real identity provider or user store in production.
 
 ### Using Docker Compose (recommended for full-stack)
 ```bash
