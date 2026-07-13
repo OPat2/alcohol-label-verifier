@@ -41,10 +41,11 @@ app.use(cors({ origin: process.env.CORS_ORIGIN?.split(',') || '*' }));
 app.use(express.json({ limit: '100mb' }));
 app.use(express.urlencoded({ limit: '100mb', extended: true }));
 app.use(requestLogger);
-app.use(limiter);
 
-// Health check (public endpoint)
+// Health check must come before rate limiter so Render/uptime pings are never throttled
 app.get('/health', healthCheck);
+
+app.use(limiter);
 
 // Public routes with tighter rate limit
 app.use('/api/auth', authLimiter, authRoutes);

@@ -6,7 +6,8 @@ describe('Health Check', () => {
     const response = await request(app).get('/health');
 
     expect(response.status).toBe(200);
-    expect(response.body.status).toBe('ok');
+    expect(response.body.status).toBe('healthy');
     expect(response.body.timestamp).toBeDefined();
+    expect(response.body.environment).toBeDefined();
   });
 });
