@@ -10,7 +10,7 @@ import {
   exportBatchToCsv,
   BatchInput,
 } from '@/services/batch.service';
-import { ApplicationData } from '@shared/types';
+import { ApplicationData } from '@label-verifier/shared';
 
 const router = Router();
 const logger = createLogger('routes:batch');

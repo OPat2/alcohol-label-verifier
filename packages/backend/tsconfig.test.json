@@ -6,7 +6,8 @@
     "noUnusedParameters": false,
     "paths": {
       "@/*": ["src/*"],
-      "@shared/*": ["../shared/src/*"]
+      "@label-verifier/shared": ["../shared/src/index.ts"],
+      "@label-verifier/shared/*": ["../shared/src/*"]
     }
   },
   "include": ["src/**/*", "../shared/src/**/*"]

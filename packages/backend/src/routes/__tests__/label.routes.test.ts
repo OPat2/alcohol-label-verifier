@@ -1,6 +1,6 @@
 import request from 'supertest';
 import app from '@/app';
-import { GOVERNMENT_WARNING_TEXT } from '@shared/constants';
+import { GOVERNMENT_WARNING_TEXT } from '@label-verifier/shared';
 
 // Mock OCR to avoid Tesseract startup in tests
 beforeAll(() => {
