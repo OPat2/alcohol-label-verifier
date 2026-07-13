@@ -1,6 +1,2 @@
 /* Routes all paths to index.html for React Router SPA support on Cloudflare Pages */
-/*  path  status */
-/login    200
-/verify   200
-/batch    200
-/*        200
+/*    /index.html    200
