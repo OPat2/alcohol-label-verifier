@@ -1,11 +1,13 @@
 # AI-Powered Alcohol Label Verification App
 
-A production-ready compliance prototype for TTB-style alcohol beverage label review workflows. Automates field extraction from label images and performs field-by-field comparison against submitted application data, reducing manual review time from 5–10 minutes per label to under 5 seconds.
+A standalone prototype for TTB-style alcohol beverage label review workflows. It extracts text from label images, compares key fields against submitted application data, and returns explainable verification results designed to reduce routine manual review time.
 
 ---
 
 ## Table of Contents
+- [Deliverables Summary](#deliverables-summary)
 - [Project Overview](#project-overview)
+- [Approach](#approach)
 - [Architecture](#architecture)
 - [Quick Start (Local)](#quick-start-local)
 - [Running Tests](#running-tests)
@@ -14,6 +16,19 @@ A production-ready compliance prototype for TTB-style alcohol beverage label rev
 - [API Reference](#api-reference)
 - [Assumptions, Trade-offs & Limitations](#assumptions-trade-offs--limitations)
 - [Performance Notes](#performance-notes)
+
+---
+
+## Deliverables Summary
+
+- **Source code repository:** this repository
+- **Deployed prototype:** `https://alcohol-label-verifier.pages.dev/login`
+- **This README includes:**
+  - local setup and run instructions
+  - deployment instructions
+  - brief documentation of the approach
+  - tools and technologies used
+  - assumptions, trade-offs, and limitations
 
 ---
 
@@ -28,6 +43,20 @@ A production-ready compliance prototype for TTB-style alcohol beverage label rev
 - **Timing instrumentation** — Per-step timings (preprocess, OCR, validation, total) shown in the UI and included in JSON export.
 - **Export** — Download individual verification results as JSON or batch results as CSV or JSON.
 - **Health endpoint** — `GET /health` for monitoring.
+
+---
+
+## Approach
+
+This prototype is designed around the core TTB review workflow described in the assignment:
+
+1. **Upload a label image** and enter the application data that an agent would normally review.
+2. **Run local OCR** to extract visible text from the label without depending on blocked external AI APIs.
+3. **Normalize and compare fields** such as brand name, alcohol content, net contents, and bottler information.
+4. **Apply stricter validation** to the Government Warning text, including required phrasing and formatting expectations.
+5. **Return explainable results** with per-field comparisons, confidence, notes, and timings so the prototype supports human review rather than replacing it.
+
+The app is intentionally a **standalone proof of concept** with mock authentication and in-memory batch state. It does not integrate with COLA and does not persist label records across restarts.
 
 ---
 
@@ -51,7 +80,7 @@ packages/
       constants/    ttb-requirements.ts
 ```
 
-**Stack:**
+**Tools Used / Stack:**
 - Backend: Node 20, Express 4, TypeScript, Tesseract.js (local offline OCR), JWT
 - Frontend: React 18, Vite 5, Tailwind CSS 3, React Router 6, Zustand, Axios, react-dropzone
 - Testing: Jest + Supertest (backend), Vitest + React Testing Library (frontend)
@@ -89,7 +118,9 @@ npm run dev -w packages/frontend
 
 Open http://localhost:3000
 
-**Demo credentials:** `agent@ttb.gov` / `demo123` (or `admin@ttb.gov` / `admin123`)
+**Demo sign-in:** use the demo credentials shown on the login page.
+
+> **Prototype auth note:** Authentication is mocked for demo purposes and should be replaced with a real identity provider or user store in production.
 
 ### Using Docker Compose (recommended for full-stack)
 ```bash
@@ -204,9 +235,7 @@ curl https://label-verifier-api.onrender.com/health
 # → {"status":"healthy","uptime":...}
 ```
 
-Open `https://alcohol-label-verifier.pages.dev` → log in with:
-- `agent@ttb.gov` / `demo123`
-- `admin@ttb.gov` / `admin123`
+Open `https://alcohol-label-verifier.pages.dev` and sign in using the demo credentials shown on the login page.
 
 ---
 
