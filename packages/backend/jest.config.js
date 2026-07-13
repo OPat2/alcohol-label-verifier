@@ -32,6 +32,8 @@ module.exports = {
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
     '^@shared/(.*)$': '<rootDir>/../shared/src/$1',
+    '^@label-verifier/shared$': '<rootDir>/../shared/src/index.ts',
+    '^@label-verifier/shared/(.*)$': '<rootDir>/../shared/src/$1',
   },
   testTimeout: 15000,
 };
